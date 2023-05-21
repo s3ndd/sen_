@@ -1,0 +1,49 @@
+version: '3.8'
+
+networks:
+  sen-local:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.16.0/20"
+    driver: bridge
+
+volumes:
+  sen-mysql-data:
+
+
+services:
+  sen-mysql:
+    image: mysql:8.0.23
+    container_name: sen-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DB_HOST=sen-mysql
+      - MYSQL_USER=sen
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_PORT=3306
+    volumes:
+      - ./docker/sen-mysql/init:/docker-entrypoint-initdb.d
+      - sen-mysql-data:/var/lib/mysql
+    networks:
+      sen-local:
+        ipv4_address: 192.168.16.100
+    command:
+      - '--character-set-server=utf8mb4'
+      - '--local-infile=1'
+      - '--default-authentication-plugin=mysql_native_password'
+
+  # api-gateway:
+  #   image: api-gateway
+  #   container_name: api-gateway
+  #   build:
+  #     context: ./api-gateway
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     sen-local:
+  #       ipv4_address: 192.168.16.1

@@ -1,0 +1,4 @@
+python-dotenv==1.0.0
+sqlalchemy==2.0.15
+marshmallow==3.19.0
+Flask~=2.3.2
